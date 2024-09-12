@@ -1,5 +1,5 @@
 # 🍕 JWT Pizza
-
+![Coverage badge](coverageBadge.svg)
 [![CI Pipeline](https://github.com/kobydj/jwt-pizza/actions/workflows/ci.yml/badge.svg)](https://github.com/kobydj/jwt-pizza/actions/workflows/ci.yml)
 
 
