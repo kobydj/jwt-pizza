@@ -103,7 +103,18 @@ test('purchase with login', async ({ page }) => {
 });
 
 test('register then logout', async ({ page }) => {
-
+  
+  await page.route('*/**/api/auth', async (route) => {
+    if(route.request().method() == 'DELETE'){
+      const logoutRes = {"message":"logout successful"};
+      await route.fulfill({ json: logoutRes });
+    } else if(route.request().method() == 'POST'){
+      const regReq = {name: "name", email: "name@test.com", password: "password"};
+      const regRes = { user: { name: "name", email: "name@test.com", roles: [{"role": "diner"}], id: 98}, token: "abcdef"};
+      expect(route.request().postDataJSON()).toMatchObject(regReq);
+      await route.fulfill({ json: regRes });
+    }
+  });
   await page.goto('http://localhost:5173/');
   await expect(page.getByRole('link', { name: 'Register' })).toBeVisible();
   await page.getByRole('link', { name: 'Register' }).click();
@@ -115,9 +126,9 @@ test('register then logout', async ({ page }) => {
   await page.getByPlaceholder('Password').click();
   await page.getByPlaceholder('Password').fill('password');
   await page.getByRole('button', { name: 'Register' }).click();
- // await expect(page.locator('#navbar-dark')).toContainText('Logout');
-  //await page.getByRole('link', { name: 'Logout' }).click();
-  //await expect(page.locator('#navbar-dark')).toContainText('Login');
+  await expect(page.locator('#navbar-dark')).toContainText('Logout');
+  await page.getByRole('link', { name: 'Logout' }).click();
+  await expect(page.locator('#navbar-dark')).toContainText('Login');
 });
 
 test('confirm about and history display', async ({ page }) => {
@@ -496,4 +507,12 @@ test('go to diningdashboard not logged in', async ({ page }) => {
   await page.goto('http://localhost:5173/diner-dashboard'); 
   await expect(page.getByRole('heading')).toContainText('Oops');
   await expect(page.getByRole('main')).toContainText('It looks like we have dropped a pizza on the floor. Please try another page.');
+});
+
+test('go to docs', async ({ page }) => {
+  // Go to the DinerDashboard page without a user
+  await page.goto('http://localhost:5173/docs');
+  await expect(page.getByRole('main')).toContainText('JWT Pizza API');
+  await expect(page.getByText('[POST] /api/authRegister a')).toBeVisible();
+  
 });
