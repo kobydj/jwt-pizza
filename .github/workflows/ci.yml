@@ -89,5 +89,7 @@ jobs:
           name: Version ${{ env.version }}
           body: |
             ## 🚀 Changes
+
             ${{ github.event.head_commit.message }}
+            
             **commit**: ${{ github.sha }}
