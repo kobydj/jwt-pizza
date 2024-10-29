@@ -53,7 +53,9 @@ jobs:
     permissions:
       id-token: write
     runs-on: ubuntu-latest
-    env:
+    environment:
+      name: production
+      url: https://pizza.dispersedcamp.click
       version: ${{needs.build.outputs.version}}
     steps:
       - name: Create OIDC token to AWS
