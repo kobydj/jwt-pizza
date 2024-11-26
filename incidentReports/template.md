@@ -1,82 +1,47 @@
-# Incident: YYYY-MM-DD HH-mm-ss
+# Incident: 2024-11-26 12-30-00
 
 ## Summary
 
-Write a summary of the incident in a few sentences. Include what happened, why, the severity of the incident and how long the impact lasted.
-
-**EXAMPLE**:
-
-Between the hour of {time range of incident, e.g. 15:45 and 16:35} on {DATE}, {NUMBER} users encountered {EVENT SYMPTOMS}. The event was triggered by a {CHANGE} at {TIME OF CHANGE THAT CAUSED THE EVENT}. The {CHANGE} contained {DESCRIPTION OF OR REASON FOR THE CHANGE, such as a change in code to update a system}.
-
-A bug in this code caused {DESCRIPTION OF THE PROBLEM}. The event was detected by {MONITORING SYSTEM}. The team started working on the event by {RESOLUTION ACTIONS TAKEN}. This {SEVERITY LEVEL} incident affected {X%} of users.
-
-There was further impact as noted by {e.g. NUMBER OF SUPPORT TICKETS SUBMITTED, SOCIAL MEDIA MENTIONS, CALLS TO ACCOUNT MANAGERS} were raised in relation to this incident.
+Pizzas were unable to be ordered through the factory between the hours of 12:30 and 2 on november 26 2024. The impact was very severe as we were unable to make any money while the issue persisted. It lasted about an hour and a half. This was caused because our factory api key was disabled around 12:30. The fix involved following the URL sent by the factory to reset the API key.
 
 ## Detection
 
 When did the team detect the incident? How did they know it was happening? How could we improve time-to-detection? Consider: How would we have cut that time by half?
 
-**EXAMPLE**:
+This incident was detected when the number of orders failed went from 0  to 1 this was noticed manually as I had not created an alert for the pizza factory. I responded immediately to work on solving the problem.
 
-This incident was detected when the {ALERT TYPE} was triggered and {TEAM/PERSON} were paged.
-
-Next, {SECONDARY PERSON} was paged, because {FIRST PERSON} didn't own the service writing to the disk, delaying the response by {XX MINUTES/HOURS}.
-
-{DESCRIBE THE IMPROVEMENT} will be set up by {TEAM OWNER OF THE IMPROVEMENT} so that {EXPECTED IMPROVEMENT}.
+To improve in the future the alerts have been improved and alerts have been added for all key metrics including factory pizzas created.
 
 ## Impact
 
 Describe how the incident impacted internal and external users during the incident. Include how many support cases were raised.
-
-**EXAMPLE**:
-
-For {XXhrs XX minutes} between {XX:XX UTC and XX:XX UTC} on {MM/DD/YY}, {SUMMARY OF INCIDENT} our users experienced this incident.
-
-This incident affected {XX} customers (X% OF {SYSTEM OR SERVICE} USERS), who experienced {DESCRIPTION OF SYMPTOMS}.
-
-{XX NUMBER OF SUPPORT TICKETS AND XX NUMBER OF SOCIAL MEDIA POSTS} were submitted.
+For 1 hour and 30 minutes between 12:30 and 2 on 11/26/2024, our users were unable to order pizzas this affected 1 customer (100% of system users), who were unable to order pizza. 0 tickets were submitted.
 
 ## Timeline
 
-Detail the incident timeline. We recommend using UTC to standardize for timezones.
-
-Include any notable lead-up events, any starts of activity, the first known impact, and escalations. Note any decisions or changed made, and when the incident ended, along with any post-impact events of note.
-
-**EXAMPLE**:
-
 All times are UTC.
 
-- _11:48_ - K8S 1.9 upgrade of control plane is finished
-- _12:46_ - Upgrade to V1.9 completed, including cluster-auto scaler and the BuildEng scheduler instance
-- _14:20_ - Build Engineering reports a problem to the KITT Disturbed
-- _14:27_ - KITT Disturbed starts investigating failures of a specific EC2 instance (ip-203-153-8-204)
-- _14:42_ - KITT Disturbed cordons the node
-- _14:49_ - BuildEng reports the problem as affecting more than just one node. 86 instances of the problem show failures are more systemic
-- _15:00_ - KITT Disturbed suggests switching to the standard scheduler
-- _15:34_ - BuildEng reports 200 pods failed
-- _16:00_ - BuildEng kills all failed builds with OutOfCpu reports
-- _16:13_ - BuildEng reports the failures are consistently recurring with new builds and were not just transient.
-- _16:30_ - KITT recognize the failures as an incident and run it as an incident.
-- _16:36_ - KITT disable the Escalator autoscaler to prevent the autoscaler from removing compute to alleviate the problem.
-- _16:40_ - KITT confirms ASG is stable, cluster load is normal and customer impact resolved.
+- _5:50_ - First order failed
+- _5:52_ - Alerts updated to include Pizza factory orders
+- _6:00_ - found errors in the logs showing what was going wrong
+- _6:19_ - changed Factory API key to key sent by factory
+- _6:20_ - changed API key in github secrets
+- _6:30_ - checked AWS to see that it had the updated key
+- _6:40_ - switch keys back to  original
+- _6:50_ - changed factory URL to be the URL provided by the factory with the new fixkey
+- _6:55_ - visited URL sent by factory chaos resolved
+- _6:59_ - functionality restored 
+- _7:02_ -First succesful order since the incident
 
 ## Response
 
 Who responded to the incident? When did they respond, and what did they do? Note any delays or obstacles to responding.
 
-**EXAMPLE**:
-
-After receiving a page at {XX:XX UTC}, {ON-CALL ENGINEER} came online at {XX:XX UTC} in {SYSTEM WHERE INCIDENT INFO IS CAPTURED}.
-
-This engineer did not have a background in the {AFFECTED SYSTEM} so a second alert was sent at {XX:XX UTC} to {ESCALATIONS ON-CALL ENGINEER} into the who came into the room at {XX:XX UTC}.
+Koby responded to the incident with minor delays. He started by reading the logs and found the URL from the factory. The largest delay was some confusion with if the API key needed to be replaced by the new key that was sent by the factory. This caused Koby to follow a rabbit hole which added significant time to the solution. 
 
 # Root cause
 
-Note the final root cause of the incident, the thing identified that needs to change in order to prevent this class of incident from happening again.
-
-**EXAMPLE**:
-
-A bug in connection pool handling led to leaked connections under failure conditions, combined with lack of visibility into connection state.
+The root cause of the incident was when an engineer selected I'm ready for some chaos on the CS329 autoGrader. This caused the factory to change the API key.
 
 ## Resolution
 
@@ -84,32 +49,16 @@ Describe how the service was restored and the incident was deemed over. Detail h
 
 Depending on the scenario, consider these questions: How could you improve time to mitigation? How could you have cut that time by half?
 
-**EXAMPLE**:
+The service was restored after the API keys were set to the original, and the URL provided by the factory was followed. I came to the idea to follow the URL when I realized that the fixKey they sent was not a replacement api key.
 
-We used a three-pronged approach to the recovery of the system:
-
-{DESCRIBE THE ACTION THAT MITIGATED THE ISSUE, WHY IT WAS TAKEN, AND THE OUTCOME}
-
-**Example**:
-By Increasing the size of the BuildEng EC3 ASG to increase the number of nodes available to support the workload and reduce the likelihood of scheduling on oversubscribed nodes
-
-Disabled the Escalator autoscaler to prevent the cluster from aggressively scaling-down
-Reverting the Build Engineering scheduler to the previous version.
+Had we known that the fixkey sent was not a replacement api key the time would have been cut in half. 
 
 # Prevention
 
-Now that you know the root cause, can you look back and see any other incidents that could have the same root cause? If yes, note what mitigation was attempted in those incidents and ask why this incident occurred again.
+No other incidents were caused by selecting I'm ready for some chaos. 
 
-**EXAMPLE**:
-
-This same root cause resulted in incidents HOT-13432, HOT-14932 and HOT-19452.
 
 # Action items
 
-Describe the corrective action ordered to prevent this class of incident in the future. Note who is responsible and when they have to complete the work and where that work is being tracked.
+In the future we will not press that button.
 
-**EXAMPLE**:
-
-1. Manual auto-scaling rate limit put in place temporarily to limit failures
-1. Unit test and re-introduction of job rate limiting
-1. Introduction of a secondary mechanism to collect distributed rate information across cluster to guide scaling effects
